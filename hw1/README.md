@@ -5,6 +5,19 @@ R12725026 秦孝媛
 This is the official implementation of the paper "[DINO: DETR with Improved DeNoising Anchor Boxes for End-to-End Object Detection](https://arxiv.org/abs/2203.03605)". 
 (DINO pronounced `daɪnoʊ' as in dinosaur)
 
+## Environment
+* OS: Linux 6.2.0-34-generic #34~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC
+* CPU Architecture: x86_64
+* GPUs:NVIDIA GeForce RTX 2080/NVIDIA GeForce RTX 2080 Ti
+* Driver Version: 470.199.02
+* CUDA Version: 11.4
+* Nvcc Version: 11.1, V11.1.74
+* Key Packages and their Versions:
+  * python: 3.7.16
+  * pytorch: 1.12.1 (CUDA 11.3, CUDNN 8.3.2)
+  * torchvision: 0.13.1 (CUDA 11.3)
+  * torchaudio: 0.12.1 (CUDA 11.3)
+  * numpy: 1.21.5
 ## Installation and Data setting
 
 <details>
@@ -60,4 +73,6 @@ COCODIR/
 ## Model Trainging Reproduce
  ```sh
   bash scripts/DINO_train.sh ./data/coco  1  > training1.log 2>&1
+
+  python evaluate.py output_val.json ./data/coco/annotations/instances_val2017.json
 ```
