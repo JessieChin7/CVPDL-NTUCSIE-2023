@@ -1,0 +1,394 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{fullpage}
+\usepackage{listings}
+\usepackage[shortlabels]{enumitem}
+\usepackage{color}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{xparse}
+\usepackage{hyperref} 
+\usepackage{cleveref} 
+\usepackage{graphicx, subcaption}
+\hypersetup{colorlinks = true,linkcolor = black,urlcolor = blue,citecolor = blue} 
+\def\MakeUppercaseUnsupportedInPdfStrings{\scshape}
+% for Chinese
+\usepackage{fontspec} % 加這個就可以設定字體
+\usepackage[BoldFont, SlantFont]{xeCJK} % 讓中英文字體分開設置
+\setCJKmainfont{新細明體} % 設定中文為系統上的字型，而英文不去更動，使用原TeX\字型
+\renewcommand{\baselinestretch}{1.3}
+
+\parskip=5pt
+\parindent=20pt
+\footnotesep=10pt
+\newtheorem{lemma}{Lemma}
+\newtheorem{ques}{Question}
+\newtheorem{prop}{Proposition}
+\newtheorem{defn}{Definition}
+\newtheorem{rmk}{Remark}
+\newtheorem{note}{Note}
+\newtheorem{eg}{Example}
+\newtheorem{aspt}{Assumption}
+
+\definecolor{emphOrange}{RGB}{247, 80, 0}
+\definecolor{stringGray}{RGB}{109, 109, 109}
+\definecolor{commentGreen}{RGB}{0, 96, 0}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=L,
+%  xleftmargin=\parindent,
+  language = C++,
+  showstringspaces=false,
+  basicstyle = \ttfamily, 
+  keywordstyle = \bfseries\color{blue}, 
+  emph = {symbol1, symbol2},
+  emphstyle = \color{red},
+  emph = {[2]symbol3, symbol4},
+  emphstyle = {[2]\color{emphOrange}},
+  commentstyle = \color{commentGreen}, 
+  stringstyle = \color{stringGray}, 
+%  backgroundcolor = \color{white}, 
+%  numbers = left, % 沒有行號，複製貼上測試程式會比較方便
+%  numberstyle = \normalsize, 
+%	stepnumber = 1, 
+%  numbersep = 10pt, 
+%  title = ,
+}
+
+% "摘要", "表", "圖", "參考文獻"
+\renewcommand{\abstractname}{\bf 摘要}
+\renewcommand{\tablename}{Table}
+\renewcommand{\figurename}{Figure}
+\renewcommand{\refname}{\bf 參考文獻}
+
+
+
+
+
+
+\begin{document}
+
+\title{}
+\author{}
+
+%\maketitle
+%\fontsize{20}{20pt}\selectfont
+
+\begin{center}
+\textbf{\Large Computer Vision Practice with Deep Learning \\[5pt]
+Homework 3}
+
+秦孝媛 R12725026 \\
+資訊管理學系研究所 一年級
+\end{center}
+\section*{Image Captioning}
+\begin{enumerate}[(a)]
+\item Compare the performance of 2 selected different pre-trained models in
+generating captions, and use the one you find the most effective for later
+problems.
+
+I used Figure \ref{fig:IMG_8531} as image captioning example.
+
+\begin{figure}[hbt]
+\centering
+\includegraphics[width=0.8\textwidth]{figure/IMG_8531_jpg.rf.abe45b49de6d004d043f2e5bda2763bd.png}
+\caption{Image Captioning Example}
+\label{fig:IMG_8531}
+\end{figure}
+
+\begin{itemize}
+\item \verb|Salesforce/blip2-opt-6.7b|
+\begin{lstlisting}[frame=single]
+a group of puffin are sitting on rocks near a waterfall
+\end{lstlisting}
+
+\item \verb|Salesforce/blip2-flan-t5-xl|
+\begin{lstlisting}[frame=single]
+a puffin is sitting on a rock in an aquarium
+\end{lstlisting}
+\end{itemize}
+
+\item Design 2 templates of prompts for later generating comparison.
+\begin{itemize}
+\item Template 1: 
+\begin{lstlisting}[frame=single]
+generate text + label + image height + image weight
+\end{lstlisting}
+
+\item Template 2: 
+\begin{lstlisting}[frame=single]
+Template 1 + in an aquarium setting + (set(labels)) + in the bounding box, highly detailed and harmonious tones, no watermarks or text, no fluorescent colors, complete, moderate low saturation , real aquarium photos
+\end{lstlisting}
+\end{itemize}
+
+
+I believe that the pre-trained model \verb|Salesforce/blip2-opt-6.7b| demonstrates superior performance in generation. Therefore, I will utilize this particular model for text prompt generation in subsequent data augmentation processes.
+
+\end{enumerate}
+
+
+
+\section*{Text-to-Image Generation}
+\begin{enumerate}[(a)]
+\item Use 2 kinds of generated prompts from Problem 1(b) to generate images
+
+
+\item Select the prompts for better-generating results, and perform image grounding generation.
+
+After utilizing two kinds of generated prompts from Problem 1(b), I observed that Template \#2 performed slightly better. The images generated were more closely resembling real aquarium photos. Although the differences between Template \#1 and Template \#2 were minimal, I ultimately chose Template \#2 as the text prompt for image grounding.
+
+
+\item Table of performance based on FID:
+% Table for FID performance
+\begin{table}[h!]
+\centering
+\caption{Performance based on FID.}
+\begin{tabular}{lccc}
+\toprule
+ & \multicolumn{2}{c}{\textbf{Text grounding}} & \textbf{Image grounding} \\
+\midrule
+\textbf{Prompt} & Template \#1 & Template \#2 & Template \#1 \\
+\textbf{FID} & 136.30 & 136.76 & 135.44 \\
+\bottomrule
+\end{tabular}
+\end{table}
+    
+\item Table of the improvement of detection model from HW1 after data augmentation:
+
+% Table for model improvement after data augmentation
+\begin{table}[h!]
+\centering
+\caption{Improvement of the detection model from HW1 after data augmentation.}
+\begin{tabular}{lccc}
+\toprule
+ & \textbf{Before Data Augmentation} & \multicolumn{2}{c}{\textbf{After Data Augmentation}} \\
+\cmidrule{3-4}
+ & & \textbf{Text grounding} & \textbf{Image grounding} \\
+\midrule
+\textbf{AP [50:95]} & 52.42 & 48.56 & 50.78 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\item Visualization
+
+Below shows the best 5 images for each category
+\begin{itemize}
+\item fish
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.15\textwidth]{figure/fish_IMG_2382_jpeg_jpg.rf.b431ad0ed94761ef82281dbe844170cc.jpg_gligen.jpg}
+\label{fig:IMG_2382}
+\includegraphics[width=0.15\textwidth]{figure/fish_IMG_2394_jpeg_jpg.rf.3994f29b2f24a3104ed3404617128485.jpg_gligen.jpg}
+\label{fig:IMG_2394}
+\includegraphics[width=0.15\textwidth]{figure/fish_IMG_2406_jpeg_jpg.rf.1188b08782ffbc29af95b22721ca6015.jpg_gligen.jpg}
+\label{fig:IMG_2406}
+\includegraphics[width=0.15\textwidth]{figure/fish_IMG_2520_jpeg_jpg.rf.4cab9c74da59c93865ed205f4dcf8c46.jpg_gligen.jpg}
+\label{fig:IMG_2520}
+\includegraphics[width=0.15\textwidth]{figure/fish_IMG_8549_jpg.rf.ee5f8f7fa2cae6f1e528e1b350ad4046.jpg_gligen.jpg}
+\label{fig:IMG_8549}
+\caption{Visualization of fish category}
+\end{figure}
+
+\item jellyfish
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.15\textwidth]{figure/jellyfish_IMG_2481_jpeg_jpg.rf.00a2836323b67c925752c28bccc26ea4.jpg_gligen.jpg}
+\label{fig:IMG_2481}
+\includegraphics[width=0.15\textwidth]{figure/jellyfish_IMG_2489_jpeg_jpg.rf.ffb357957a29cdef43f3fdfb2a13c417.jpg_gligen.jpg}
+\label{fig:IMG_2489}
+\includegraphics[width=0.15\textwidth]{figure/jellyfish_IMG_2573_jpeg_jpg.rf.b7884c20265e0dd7cefe21da58643216.jpg_gligen.jpg}
+\label{fig:IMG_2573}
+\includegraphics[width=0.15\textwidth]{figure/jellyfish_IMG_8590_MOV-4_jpg.rf.1691f0958ffea266daa9011c203cd726.jpg_gligen.jpg}
+\label{fig:IMG_8590}
+\includegraphics[width=0.15\textwidth]{figure/jellyfish_IMG_8599_MOV-2_jpg.rf.0b2b0733befaae0b08c0e04b86f295b9.jpg_gligen.jpg}
+\label{fig:IMG_8599}
+\caption{Visualization of jellyfish category}
+\end{figure}
+
+\item penguin
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.15\textwidth]{figure/penguin_IMG_2295_jpeg_jpg.rf.498a525f58666743ef5d65b7f6438adc.jpg_gligen.jpg}
+\label{fig:IMG_2295}
+\includegraphics[width=0.15\textwidth]{figure/penguin_IMG_2304_jpeg_jpg.rf.87ed7625b3869f06caf5a9ca5720f3f4.jpg_gligen.jpg}
+\label{fig:IMG_2304}
+\includegraphics[width=0.15\textwidth]{figure/penguin_IMG_2324_jpeg_jpg.rf.1f5efa1adc71c46d5037bdcd281056b9.jpg_gligen.jpg}
+\label{fig:IMG_2324}
+\includegraphics[width=0.15\textwidth]{figure/penguin_IMG_2331_jpeg_jpg.rf.430bebeabaa960aedfce00821dbf1823.jpg_gligen.jpg}
+\label{fig:IMG_2331}
+\includegraphics[width=0.15\textwidth]{figure/penguin_IMG_2350_jpeg_jpg.rf.c77c8bea4bbacefbccb48673c5f40171.jpg_gligen.jpg}
+\label{fig:IMG_2350}
+\caption{Visualization of penguin category}
+\end{figure}
+
+\item puffin
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.15\textwidth]{figure/puffin_IMG_2284_jpeg_jpg.rf.99de11cb5727748bd3eae3afe7b415e6.jpg_gligen.jpg}
+\label{fig:IMG_2284}
+\includegraphics[width=0.15\textwidth]{figure/puffin_IMG_2286_jpeg_jpg.rf.bbcb2046dedb8e1fb3a9519848c1a4c2.jpg_gligen.jpg}
+\label{fig:IMG_2286}
+\includegraphics[width=0.15\textwidth]{figure/puffin_IMG_2291_jpeg_jpg.rf.78e908bd2cc12eafc40a5bf3101b8b39.jpg_gligen.jpg}
+\label{fig:IMG_2291}
+\includegraphics[width=0.15\textwidth]{figure/puffin_IMG_2292_jpeg_jpg.rf.122a0051d4d65d8651089a2ebbc2ed85.jpg_gligen.jpg}
+\label{fig:IMG_2292}
+\includegraphics[width=0.15\textwidth]{figure/puffin_IMG_3146_jpeg_jpg.rf.2a4d1b21ca18859f03d310845ee1a426.jpg_gligen.jpg}
+\label{fig:IMG_3146}
+\caption{Visualization of puffin category}
+\end{figure}
+
+\item shark
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.15\textwidth]{figure/shark_IMG_2498_jpeg_jpg.rf.fb8d5cb2ea8c29c710ef2240cf19918f.jpg_gligen.jpg}
+\label{fig:IMG_2498}
+\includegraphics[width=0.15\textwidth]{figure/shark_IMG_2507_jpeg_jpg.rf.51612d3065ddd5d951909ca543e84bb7.jpg_gligen.jpg}
+\label{fig:IMG_2507}
+\includegraphics[width=0.15\textwidth]{figure/shark_IMG_2508_jpeg_jpg.rf.6341e9035957fcc1420ec41cd9176b7a.jpg_gligen.jpg}
+\label{fig:IMG_2508}
+\includegraphics[width=0.15\textwidth]{figure/shark_IMG_2640_jpeg_jpg.rf.3cc8a06471bb887f2ca3deea90e1f740.jpg_gligen.jpg}
+\label{fig:IMG_2640}
+\includegraphics[width=0.15\textwidth]{figure/shark_IMG_8571_MOV-1_jpg.rf.b22e2df287efb2b9ecd33c88a607e31e.jpg_gligen.jpg}
+\label{fig:IMG_8571}
+\caption{Visualization of shark category}
+\end{figure}
+
+\item starfish
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.15\textwidth]{figure/starfish_IMG_2378_jpeg_jpg.rf.9a7993c75521d4b5383257936c7ab263.jpg_gligen.jpg}
+\label{fig:IMG_2378}
+\includegraphics[width=0.15\textwidth]{figure/starfish_IMG_2536_jpeg_jpg.rf.89879f0a6436d7634771fd7de97784f8.jpg_gligen.jpg}
+\label{fig:IMG_2536}
+\includegraphics[width=0.15\textwidth]{figure/starfish_IMG_2540_jpeg_jpg.rf.648b31d1066b616be81fb9447de85358.jpg_gligen.jpg}
+\label{fig:IMG_2540}
+\includegraphics[width=0.15\textwidth]{figure/starfish_IMG_3123_jpeg_jpg.rf.e76afbe597d98c497fcf2ac25c3d0fc7.jpg_gligen.jpg}
+\label{fig:IMG_3123}
+\includegraphics[width=0.15\textwidth]{figure/starfish_IMG_3182_jpeg_jpg.rf.3e85376545651810d891af33d25e6bcf.jpg_gligen.jpg}
+\label{fig:IMG_3182}
+\caption{Visualization of starfish category}
+\end{figure}
+
+\item stingray
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.15\textwidth]{figure/stingray_IMG_2549_jpeg_jpg.rf.d9307c4549bb67163bb43c81fb771cd8.jpg_gligen.jpg}
+\label{fig:IMG_2549}
+\includegraphics[width=0.15\textwidth]{figure/stingray_IMG_2550_jpeg_jpg.rf.d8b525b14483fc250303ce4be356b57c.jpg_gligen.jpg}
+\label{fig:IMG_2550}
+\includegraphics[width=0.15\textwidth]{figure/stingray_IMG_2556_jpeg_jpg.rf.95be135e1024945e03cb4e03910ce8fd.jpg_gligen.jpg}
+\label{fig:IMG_2556}
+\includegraphics[width=0.15\textwidth]{figure/stingray_IMG_2619_jpeg_jpg.rf.62b48e73de77f2d89e512df79ebb3041.jpg_gligen.jpg}
+\label{fig:IMG_2619}
+\includegraphics[width=0.15\textwidth]{figure/stingray_IMG_2623_jpeg_jpg.rf.0af1f3048c78df2f0f8dc887ff548198.jpg_gligen.jpg}
+\label{fig:IMG_2623}
+\caption{Visualization of stingray category}
+\end{figure}
+
+
+\end{itemize}
+
+\end{enumerate}
+
+
+\section*{Data Augmentation Experiments}
+\begin{enumerate}[(a)]
+\item Detailed settings of experiments
+\begin{itemize}
+\item Checkpoint
+
+\href{https://drive.google.com/drive/folders/1qD5m1NmK0kjE5hh-G17XUX751WsEG-h_}{checkpoint0033\_4scale.pth}, DINO Official 36 epoch setting, backbone R50 pre-train weight
+
+\item Data Augmentation Setting
+
+My data augmentation strategy aimed to address the imbalance across categories in our training dataset. I identified categories with fewer than 130 unique images and excluded the 'creatures' category due to its initial surplus.
+
+The augmentation targeted single-category images with up to six annotations, with each eligible image receiving a maximum of four augmentations. This procedure increased the counts for 'jellyfish', 'penguin', 'puffin', 'shark', 'starfish', and 'stingray' to nearer the 130-image goal, as illustrated in the Figure \ref{fig:TrainingSetBarPlot} bar plots.
+
+Post-augmentation, 'jellyfish', 'penguin', and 'puffin' categories saw a rise to over 80 images each, 'shark' to 134, and 'starfish' and 'stingray' to 93 and 91 respectively. This enhanced the dataset's uniformity, setting a stronger foundation for training a balanced image classification model.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{figure/data_augmentation_barplot.png}
+\caption{Data Augmentation Setting in Training Set}
+\label{fig:TrainingSetBarPlot}
+\end{figure}
+
+\end{itemize}
+\item Reasons and discussion
+I believe there are two main reasons why Augmentation might decrease after Text-to-Image Generation Augmentation:
+\begin{enumerate}[(1)]
+\item Validation Dataset Problems
+
+The validation set also suffers from data imbalance issues. Evaluating with imbalanced data cannot accurately measure the effects of data augmentation. Moreover, since the images generated by GLIGEN differ stylistically from the original images, I suggest implementing Image-to-Text Data Augmentation in the Validation Set as well. This would better adapt the Classifier to the styles of these generated images. However, due to operational guidelines and constraints, this implementation was not carried out in this homework.
+
+\item GLIGEN Incorrect Image Generation
+
+Although GLIGEN is relatively superior among Text-to-Image models, it still sometimes produces inaccurate or even incorrect images. This might be due to limitations in its training data. The model's ability to generate accurate images is heavily dependent on the diversity and quality of the images it was trained on. If the dataset lacks variety or contains inaccuracies itself, GLIGEN may replicate these flaws in its outputs. Additionally, the complexity of interpreting text descriptions and translating them into visual elements is a challenging task. Subtle nuances in language or abstract concepts can be difficult for the model to accurately represent visually, leading to inconsistencies or errors in the generated images. Finally, the inherent limitations of the algorithm's design might also contribute to these inaccuracies, as it may not be fully capable of handling all the complexities involved in the text-to-image conversion process.
+\end{enumerate}
+
+
+\item Supporting evidence
+This section substantiates the two reasons mentioned in the "Reasons and Discussion" section，
+\begin{enumerate}[(1)]
+\item Validation Dataset 
+
+As depicted in Figure \ref{fig:ValSetBarPlot}, there is a significant data imbalance within the Validation Dataset. The bar plot illustrates a disproportionate number of images across different categories, with the 'fish' category having an overwhelming majority of 63 images, while other categories like 'jellyfish' and 'puffin' are underrepresented with only 9 and 15 images respectively. This disparity can skew the performance metrics and does not provide an accurate reflection of the classifier's effectiveness across various classes.
+
+\item GLIGEN wrong image generation
+
+To evaluate the quality of images generated by GLIGEN, I superimposed the bounding boxes from the training annotations onto the generated images. I discovered that non-square images posed a challenge for GLIGEN, leading to marine life being generated in incorrect regions. This issue, shown in Figure \ref{GLIGENevidence}\subref{fig:Evidence1}, could be mitigated by resizing all images to a 512*512 square and rescaling the bounding boxes accordingly. Additionally, there are instances where the marine life specified by the bounding boxes still extends beyond these parameters, as evidenced in Figure \ref{GLIGENevidence}\subref{fig:Evidence2}. Despite filtering out training images with more than one category or more than six bounding boxes, the problem of excessive noise in the background of generated images persists. At times, this noise includes additional marine life, creating a confusing backdrop as indicated in Figure \ref{GLIGENevidence}\subref{fig:Evidence3}. Lastly, even when the marine organisms generated by GLIGEN are within the bounding box and the background noise is minimal, the organisms themselves can appear somewhat bizarre and unrealistic, as seen in Figure \ref{GLIGENevidence}\subref{fig:Evidence4}.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{figure/validation_barplot.png}
+\caption{Data Imbalance in Validation Set}
+\label{fig:ValSetBarPlot}
+\end{figure}
+
+\begin{figure}[H]
+        \centering
+		\subcaptionbox{Non-square image misalignment  \label{fig:Evidence1}}{
+        \includegraphics[width = .3\linewidth]{figure/evidence_IMG_8590_MOV-4_jpg.rf.1691f0958ffea266daa9011c203cd726_1_aug.jpg}  
+    }
+     \subcaptionbox{Generated range exceeds the bounding boxes \label{fig:Evidence2}}{
+        \includegraphics[width = .3\linewidth]{figure/evidence_IMG_8590_MOV-4_jpg.rf.1691f0958ffea266daa9011c203cd726_2_aug.jpg}
+    }
+    \\
+        \subcaptionbox{A lot of noise in the background \label{fig:Evidence3}}{
+        \includegraphics[width = .3\linewidth]{figure/evidence_IMG_8599_MOV-2_jpg.rf.0b2b0733befaae0b08c0e04b86f295b9_3_aug.jpg}
+    }
+        \subcaptionbox{Generate unrealistic animals \label{fig:Evidence4}}{
+        \includegraphics[width = .3\linewidth]{figure/evidence_IMG_8590_MOV-4_jpg.rf.1691f0958ffea266daa9011c203cd726_3_aug.jpg}
+    }
+        \caption{GLIGEN wrong image generation evidences}
+        \label{GLIGENevidence}
+\end{figure}
+
+
+\end{enumerate}
+
+
+\end{document}

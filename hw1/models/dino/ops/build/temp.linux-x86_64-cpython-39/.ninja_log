@@ -1,0 +1,4 @@
+# ninja log v5
+0	4011	1701264359127241150	/home/jessiechin/DINO/hw1/models/dino/ops/build/temp.linux-x86_64-cpython-39/home/jessiechin/DINO/hw1/models/dino/ops/src/cpu/ms_deform_attn_cpu.o	7d25840c8af5ce73
+1	8058	1701264363171542339	/home/jessiechin/DINO/hw1/models/dino/ops/build/temp.linux-x86_64-cpython-39/home/jessiechin/DINO/hw1/models/dino/ops/src/cuda/ms_deform_attn_cuda.o	96296960a562ed9
+1	8938	1701264364055608580	/home/jessiechin/DINO/hw1/models/dino/ops/build/temp.linux-x86_64-cpython-39/home/jessiechin/DINO/hw1/models/dino/ops/src/vision.o	c6599c41bfc02001

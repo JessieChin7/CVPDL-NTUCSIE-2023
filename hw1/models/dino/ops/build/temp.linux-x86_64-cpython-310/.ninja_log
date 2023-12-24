@@ -1,0 +1,11 @@
+# ninja log v5
+0	7215	1701088761581901829	/home/jessiechin/DINO/hw1/models/dino/ops/build/temp.linux-x86_64-cpython-310/home/jessiechin/DINO/hw1/models/dino/ops/src/cpu/ms_deform_attn_cpu.o	7a85c9a762d6b6eb
+0	11441	1701088765810220986	/home/jessiechin/DINO/hw1/models/dino/ops/build/temp.linux-x86_64-cpython-310/home/jessiechin/DINO/hw1/models/dino/ops/src/vision.o	f09b0377e6af5e4e
+0	12272	1701088766642283793	/home/jessiechin/DINO/hw1/models/dino/ops/build/temp.linux-x86_64-cpython-310/home/jessiechin/DINO/hw1/models/dino/ops/src/cuda/ms_deform_attn_cuda.o	a63da4c243129521
+81	8286	1703139234210746477	/home/jessiechin/DINO/hw1/models/dino/ops/build/temp.linux-x86_64-cpython-310/home/jessiechin/DINO/hw1/models/dino/ops/src/cpu/ms_deform_attn_cpu.o	b6ccff619b835501
+81	14397	1703139240319207942	/home/jessiechin/DINO/hw1/models/dino/ops/build/temp.linux-x86_64-cpython-310/home/jessiechin/DINO/hw1/models/dino/ops/src/vision.o	fe7d1f76c93efb10
+81	20328	1703139246251656108	/home/jessiechin/DINO/hw1/models/dino/ops/build/temp.linux-x86_64-cpython-310/home/jessiechin/DINO/hw1/models/dino/ops/src/cuda/ms_deform_attn_cuda.o	d9d9046fb293a21b
+1023	15912	1703171961574931963	/home/jessiechin/DINO/hw1/models/dino/ops/build/temp.linux-x86_64-cpython-310/home/jessiechin/DINO/hw1/models/dino/ops/src/cpu/ms_deform_attn_cpu.o	6df09a36890797a9
+1024	22113	1703171967775404065	/home/jessiechin/DINO/hw1/models/dino/ops/build/temp.linux-x86_64-cpython-310/home/jessiechin/DINO/hw1/models/dino/ops/src/vision.o	75c7822da15b773a
+1024	26048	1703171971711703767	/home/jessiechin/DINO/hw1/models/dino/ops/build/temp.linux-x86_64-cpython-310/home/jessiechin/DINO/hw1/models/dino/ops/src/cuda/ms_deform_attn_cuda.o	6096490f5bc35b7b
+4	20773	1703174603149740337	/home/jessiechin/DINO/hw1/models/dino/ops/build/temp.linux-x86_64-cpython-310/home/jessiechin/DINO/hw1/models/dino/ops/src/cuda/ms_deform_attn_cuda.o	a8100f4bbfabe9a2

@@ -33,6 +33,7 @@ import os
 from torchvision.transforms import ColorJitter
 import torchvision.transforms as T
 
+
 # Our classes
 CLASSES = [
     'creatures', 'fish', 'jellyfish', 'penguin', 'puffin',
@@ -143,7 +144,9 @@ def get_args_parser():
     parser.add_argument('--dist_url', default='env://', help='url used to set up distributed training')
     parser.add_argument('--rank', default=0, type=int,
                         help='number of distributed processes')
-    parser.add_argument("--local_rank", type=int, help='local rank for DistributedDataParallel')
+    # parser.add_argument("--local_rank", type=int, help='local rank for DistributedDataParallel')
+    parser.add_argument('--local-rank', default=0, type=int, help='node rank for distributed training')
+
     parser.add_argument('--amp', action='store_true',
                         help="Train with mixed precision")
     
@@ -205,8 +208,16 @@ def main(args):
     if args.frozen_weights is not None:
         assert args.masks, "Frozen training is meant for segmentation only"
     print(args)
+   
+    torch.cuda.empty_cache()
+    print("CUDA available:", torch.cuda.is_available())
+    print("Number of CUDA devices:", torch.cuda.device_count())
+    for i in range(torch.cuda.device_count()):
+        print(f"Device {i}: {torch.cuda.get_device_name(i)}")
 
+    # torch.cuda.set_device(1)
     device = torch.device(args.device)
+    
 
     # fix the seed for reproducibility
     seed = args.seed + utils.get_rank()
@@ -218,7 +229,6 @@ def main(args):
     model, criterion, postprocessors = build_model_main(args)
     wo_class_error = False
     model.to(device)
-
     # ema
     if args.use_ema:
         ema_m = ModelEma(model, args.ema_decay)
@@ -385,8 +395,64 @@ def main(args):
                 "scores": scores.cpu().numpy().tolist()
             }
 
-        with open('output10202300.json', 'w') as f:
+            # # Extract model outputs
+            # probas = outputs['pred_logits'].softmax(-1)[0, :, :-1]
+            # keep = probas.max(-1).values > 0.9
+            # bboxes_scaled = rescale_bboxes(outputs['pred_boxes'][0, keep], pil_img.size)
+
+            # # Plot the results
+            # plot_results(pil_img, probas[keep], bboxes_scaled)
+            
+            # # Save the plot to a file
+            # plt.savefig(f'./visualization/result_{image_name}.png')
+
+        for image_name in os.listdir('./data/coco/train2017'):
+            if '.jpg' in image_name:
+                image_path = os.path.join('./data/coco/train2017', image_name)
+                pil_img = Image.open(image_path)
+                width, height = pil_img.size
+
+                # Process the image with the same transformation process
+                transform = T.Compose([
+                    T.Resize(800),
+                    T.ToTensor(),
+                    T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+                ])
+                img_tensor = transform(pil_img).unsqueeze(0).to(device)  # Add batch dimension and move to device
+
+                # Propagate the image through the model
+                with torch.no_grad():
+                    outputs = model_without_ddp(img_tensor)  # Note: Use model_without_ddp in distributed setup
+
+                orig_target_sizes = torch.tensor([[height, width]])
+                results = postprocessors['bbox'](outputs, orig_target_sizes.to(device))
+                
+                boxes = results[0]['boxes']
+                labels = results[0]['labels']
+                scores = results[0]['scores']
+
+                submission_dict[image_name] = {
+                    "boxes": boxes.cpu().numpy().tolist(),
+                    "labels": labels.cpu().numpy().tolist(),
+                    "scores": scores.cpu().numpy().tolist()
+                }
+
+                # Extract model outputs
+                probas = outputs['pred_logits'].softmax(-1)[0, :, :-1]
+                keep = probas.max(-1).values > 0.9
+                bboxes_scaled = rescale_bboxes(outputs['pred_boxes'][0, keep], pil_img.size)
+
+                # Plot the results
+                plot_results(pil_img, probas[keep], bboxes_scaled)
+                
+                # Save the plot to a file
+                plt.savefig(f'./visualization/result_{image_name}.png')
+
+
+        with open('output1221aug.json', 'w') as f:
             json.dump(submission_dict, f)
+        
+        
         return
 
     print("Start training")
