@@ -1,5 +1,39 @@
-# CVPDL #Homework1
+# CVPDL #Homework3
 R12725026 秦孝媛
+
+## Image-To-Text Data Augmentation Process
+
+Navigate to the `../generation` folder to execute the following notebooks:
+
+1. **`data_process.ipynb`**
+   - **Purpose**: Construct Augment List for Training & Validation Set.
+   - **Tasks**:
+     - Draw the data category plot after augmentation.
+     - Update annotation files.
+
+2. **`BLIP2_process.ipynb`**
+   - **Purpose**: BLIP2 Process for Text Prompt Generation.
+   - **Tasks**: 
+     - Generate Text Prompt for `<train/val>_aug_<date>.json`.
+     - Update `annotation_path` and `image_path` accordingly.
+
+3. **`GLIGEN_process.ipynb`**
+   - **Purpose**: GLIGEN Process for Text Prompt Generation.
+   - **Tasks**: 
+     - Generate Text Prompt for `<train/val>_aug_<date>.json`.
+     - Update `annotation_path` and `image_captioning_path` generated from `./BLIP2_process.ipynb`.
+
+4. **`fid_evaluation.ipynb`**
+   - **Purpose**: FID Evaluation between real and pseudo images.
+   - **Tasks**:
+     - Calculate FID (Fréchet Inception Distance).
+     - Update paths for real and pseudo images including their resized versions: `path_real_images`, `path_pseudo_images`, `resized_real_images`, `resized_pseudo_images`.
+
+
+**The following is continued by hw1**
+
+---
+
 ## Model - DINO
 ![method](figs/framework.png "model arch")
 This is the official implementation of the paper "[DINO: DETR with Improved DeNoising Anchor Boxes for End-to-End Object Detection](https://arxiv.org/abs/2203.03605)". 
