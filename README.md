@@ -1,7 +1,7 @@
-# Computer Vision Practice and Deep Learning
+# Computer Vision Practice with Deep Learning
 2023 Spring NTU CSIE
 
-## Homework 1: Object Detection with DINO
+## Homework 1: Transformer-Based Object Detection
 - **Objective**: Implement object detection using the DINO framework.
 - **Techniques and Implementation**:
   - Employed advanced object detection methods using the DINO (DEtection with Transformers) framework.
@@ -11,7 +11,7 @@
 - **Performance Metrics**:
   - Achieved a mean Average Precision (mAP) of 0.5233.
 
-## Homework 2: Transformer-Based Object Detection
+## Homework 2: Generic Object Detection and Practical Issue Survey
 - **Objective**: Analyzed convergence issues in DETR models and explored advanced models and techniques.
 - **Key Highlights**:
   - Analyzed DETR (End-to-End Object Detection with Transformers) for convergence issues.
